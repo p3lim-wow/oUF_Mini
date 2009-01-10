@@ -1,0 +1,6 @@
+## Interface: 30000
+## Author: p3lim
+## Title: oUF Mini
+## RequiredDeps: oUF
+
+oUF_Mini.lua
