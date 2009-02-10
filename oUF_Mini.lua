@@ -1,18 +1,37 @@
-local function OnEnter(...)
-	if(not InCombatLockdown()) then
-		UnitFrame_OnEnter(...)
+--[[
+local function HasDType(unit, t)
+	for i = 1, 40 do
+		local name, _, _, _, dtype = UnitDebuff(unit, i)
+		if(not name) then
+			return
+		elseif(dtype == t) then
+			return true
+		end
 	end
 end
 
+local function UpdateBackdrop(self)
+	for i = 1, 40 do
+		local name, _, _, _, dtype = UnitDebuff(self.unit, i)
+		if(not name and (dtype == 'Poison' or dtype == 'Curse')) then
+			local color = DebuffTypeColor[dtype]
+			self:SetBackdropColor(color.r, color.g, color.b)
+		else
+			self:SetBackdropColor(0, 0, 0)
+		end
+	end
+end
+--]]
 local function OverrideUpdateHealth(self, event, unit, bar)
 	local localized, english = UnitClass(unit)
-	bar.bg:SetVertexColor(unpack(self.colors.class[english]))
+	local color = self.colors.class[english]
+	if(color) then bar.bg:SetVertexColor(unpack(color)) end
 	self:SetAlpha(UnitIsDeadOrGhost(unit) and 0.25 or 1)
 end
 
 local function CreateStyle(self, unit)
 	self:RegisterForClicks('AnyUp')
-	self:SetScript('OnEnter', OnEnter)
+	self:SetScript('OnEnter', UnitFrame_OnEnter)
 	self:SetScript('OnLeave', UnitFrame_OnLeave)
 
 	self:SetAttribute('initial-height', 16)
@@ -30,6 +49,11 @@ local function CreateStyle(self, unit)
 	self.Health.bg:SetAllPoints(self.Health)
 	self.Health.bg:SetTexture([=[Interface\ChatFrame\ChatFrameBackground]=])
 
+	self.ReadyCheck = self.Health:CreateTexture(nil, 'OVERLAY')
+	self.ReadyCheck:SetAllPoints(self.Health)
+
+--	self:RegisterEvent('UNIT_AURA', UpdateBackdrop) -- needs to be fixed
+
 	self.OverrideUpdateHealth = OverrideUpdateHealth
 	self.disallowVehicleSwap = true
 end
@@ -37,9 +61,9 @@ end
 oUF:RegisterStyle('Mini', CreateStyle)
 oUF:SetActiveStyle('Mini')
 
-local grid = oUF:Spawn('header', 'oUF_Mini')
-grid:SetPoint('TOP', Minimap, 'BOTTOM', 0, -15)
-grid:SetManyAttributes(
+local raid = oUF:Spawn('header', 'oUF_Mini', nil, '')
+raid:SetPoint('TOP', Minimap, 'BOTTOM', 0, -15)
+raid:SetManyAttributes(
 	'showRaid', true,
 	'xOffset', 5,
 	'point', 'LEFT',
@@ -50,4 +74,5 @@ grid:SetManyAttributes(
 	'columnSpacing', 5,
 	'columnAnchorPoint', 'TOP'
 )
-grid:Show()
+raid:SetScale(1.03)
+raid:Show()

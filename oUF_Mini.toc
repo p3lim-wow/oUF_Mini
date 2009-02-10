@@ -2,5 +2,6 @@
 ## Author: p3lim
 ## Title: oUF Mini
 ## RequiredDeps: oUF
+## OptionalDeps: oUF_ReadyCheck
 
 oUF_Mini.lua
