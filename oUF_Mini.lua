@@ -1,3 +1,7 @@
+
+oUF.Tags['[wild]'] = function(u) return (UnitAura(u, 'Gift of the Wild') or UnitAura(u, 'Mark of the Wild')) and '|cffff33ff.|r' end
+oUF.TagEvents['[wild]'] = 'UNIT_AURA'
+
 local function ColorBackground(self)
 	local localized, class = UnitClass(self.unit)
 	self.Health.bg:SetVertexColor(unpack(self.colors.class[class] or self.colors.health))
@@ -23,6 +27,11 @@ local function CreateStyle(self, unit)
 	self.Health.bg:SetAllPoints(self.Health)
 	self.Health.bg:SetTexture([=[Interface\ChatFrame\ChatFrameBackground]=])
 	table.insert(self.__elements, ColorBackground)
+	
+	local buff = self.Health:CreateFontString(nil, 'OVERLAY', 'GameFontNormalHuge')
+	buff:SetPoint('BOTTOMRIGHT', self.Health, 'TOPRIGHT', 1, -5)
+	buff:SetShadowOffset(0, 0)
+	self:Tag(buff, '[wild]')
 
 	self.ReadyCheck = self.Health:CreateTexture(nil, 'OVERLAY')
 	self.ReadyCheck:SetAllPoints(self.Health)
