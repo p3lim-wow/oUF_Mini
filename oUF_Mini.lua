@@ -2,6 +2,16 @@
 oUF.Tags['[wild]'] = function(u) return (UnitAura(u, 'Gift of the Wild') or UnitAura(u, 'Mark of the Wild')) and '|cffff33ff.|r' end
 oUF.TagEvents['[wild]'] = 'UNIT_AURA'
 
+local function ColorThreat(self)
+	local status = UnitThreatSituation(self.unit)
+	if(status > 0) then
+		local r, g, b = GetThreatStatusColor(status)
+		self.Health:SetStatusBarColor(r, g, b)
+	else
+		self.Health:SetStatusBarColor(0.25, 0.25, 0.25)
+	end
+end
+
 local function ColorBackground(self)
 	local localized, class = UnitClass(self.unit)
 	self.Health.bg:SetVertexColor(unpack(self.colors.class[class] or self.colors.health))
@@ -22,6 +32,7 @@ local function CreateStyle(self, unit)
 	self.Health:SetAllPoints(self)
 	self.Health:SetStatusBarTexture([=[Interface\AddOns\oUF_Mini\minimalist]=])
 	self.Health:SetStatusBarColor(0.25, 0.25, 0.25)
+	self:RegisterEvent('UNIT_THREAT_SITUATION_UPDATE', ColorThreat)
 
 	self.Health.bg = self.Health:CreateTexture(nil, 'BACKGROUND')
 	self.Health.bg:SetAllPoints(self.Health)
