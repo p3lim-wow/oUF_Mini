@@ -1,11 +1,20 @@
 
-oUF.Tags['[wild]'] = function(u) return (UnitAura(u, 'Gift of the Wild') or UnitAura(u, 'Mark of the Wild')) and '|cffff33ff.|r' end
-oUF.Tags['[inner]'] = function(u) return UnitAura(u, 'Innervate') and '|cff0080ff.|r' end
+oUF.Tags['[misswild]'] = function(u) return (not UnitAura(u, 'Gift of the Wild') and not UnitAura(u, 'Mark of the Wild')) and '|cffff33ff!|r' end
+oUF.TagEvents['[misswild]'] = 'UNIT_AURA'
 
-oUF.TagEvents['[wild]'] = 'UNIT_AURA'
-oUF.TagEvents['[inner]'] = 'UNIT_AURA'
+local function onEnter(...)
+	local self = ...
+	self.Highlight:Show()
+	UnitFrame_OnEnter(...)
+end
 
-local function ColorThreat(self)
+local function onLeave(...)
+	local self = ...
+	self.Highlight:Hide()
+	UnitFrame_OnLeave(...)
+end
+
+local function colorThreat(self)
 	local status = UnitThreatSituation(self.unit)
 	if(status > 0) then
 		local r, g, b = GetThreatStatusColor(status)
@@ -15,15 +24,15 @@ local function ColorThreat(self)
 	end
 end
 
-local function ColorBackground(self)
+local function colorBackground(self)
 	local localized, class = UnitClass(self.unit)
 	self.Health.bg:SetVertexColor(unpack(self.colors.class[class] or self.colors.health))
 end
 
-local function CreateStyle(self, unit)
+local function createStyle(self, unit)
 	self:RegisterForClicks('AnyUp')
-	self:SetScript('OnEnter', UnitFrame_OnEnter)
-	self:SetScript('OnLeave', UnitFrame_OnLeave)
+	self:SetScript('OnEnter', onEnter)
+	self:SetScript('OnLeave', onLeave)
 
 	self:SetAttribute('initial-height', 16)
 	self:SetAttribute('initial-width', 20)
@@ -35,24 +44,23 @@ local function CreateStyle(self, unit)
 	self.Health:SetAllPoints(self)
 	self.Health:SetStatusBarTexture([=[Interface\AddOns\oUF_Mini\minimalist]=])
 	self.Health:SetStatusBarColor(0.25, 0.25, 0.25)
-	self:RegisterEvent('UNIT_THREAT_SITUATION_UPDATE', ColorThreat)
+	self:RegisterEvent('UNIT_THREAT_SITUATION_UPDATE', colorThreat)
 
 	self.Health.bg = self.Health:CreateTexture(nil, 'BACKGROUND')
 	self.Health.bg:SetAllPoints(self.Health)
 	self.Health.bg:SetTexture([=[Interface\ChatFrame\ChatFrameBackground]=])
-	table.insert(self.__elements, ColorBackground)
+	table.insert(self.__elements, colorBackground)
+
+	self.Highlight = self.Health:CreateTexture(nil, 'OVERLAY')
+	self.Highlight:SetTexture(1, 1, 0.6, 0.2)
+	self.Highlight:SetAllPoints(self.Health)
+	self.Highlight:Hide()
 	
-	local wild = self.Health:CreateFontString(nil, 'OVERLAY', 'GameFontNormalHuge')
-	wild:SetPoint('BOTTOMRIGHT', self.Health, 'TOPRIGHT', 1, -5)
-	wild:SetShadowOffset(0, 0)
-	self:Tag(wild, '[wild]')
+	local misswild = self.Health:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
+	misswild:SetPoint('CENTER')
+	self:Tag(misswild, '[misswild]')
 
-	local inner = self.Health:CreateFontString(nil, 'OVERLAY', 'GameFontNormalHuge')
-	inner:SetPoint('BOTTOMLEFT', self.Health, -2, -2)
-	inner:SetShadowOffset(0, 0)
-	self:Tag(inner, '[inner]')
-
-	self.ReadyCheck = self.Health:CreateTexture(nil, 'OVERLAY')
+	self.ReadyCheck = self.Health:CreateTexture(nil, 'ARTWORK')
 	self.ReadyCheck:SetAllPoints(self.Health)
 
 	self.DebuffHighlightBackdrop = true
@@ -63,7 +71,7 @@ local function CreateStyle(self, unit)
 	end
 end
 
-oUF:RegisterStyle('Mini', CreateStyle)
+oUF:RegisterStyle('Mini', createStyle)
 oUF:SetActiveStyle('Mini')
 
 local raid = oUF:Spawn('header', 'oUF_Mini', nil, '')
