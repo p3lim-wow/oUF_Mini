@@ -2,21 +2,19 @@
 oUF.Tags['[misswild]'] = function(u) return (not UnitAura(u, 'Gift of the Wild') and not UnitAura(u, 'Mark of the Wild')) and '|cffff33ff!|r' end
 oUF.TagEvents['[misswild]'] = 'UNIT_AURA'
 
-local function onEnter(...)
-	local self = ...
+local function onEnter(self)
 	self.Highlight:Show()
-	UnitFrame_OnEnter(...)
+	UnitFrame_OnEnter(self)
 end
 
-local function onLeave(...)
-	local self = ...
+local function onLeave(self)
 	self.Highlight:Hide()
-	UnitFrame_OnLeave(...)
+	UnitFrame_OnLeave(self)
 end
 
 local function colorThreat(self)
 	local status = UnitThreatSituation(self.unit)
-	if(status > 0) then
+	if(status and status > 0) then
 		local r, g, b = GetThreatStatusColor(status)
 		self.Health:SetStatusBarColor(r, g, b)
 	else
@@ -29,7 +27,7 @@ local function colorBackground(self)
 	self.Health.bg:SetVertexColor(unpack(self.colors.class[class] or self.colors.health))
 end
 
-local function createStyle(self, unit)
+local function styleFunction(self, unit)
 	self:RegisterForClicks('AnyUp')
 	self:SetScript('OnEnter', onEnter)
 	self:SetScript('OnLeave', onLeave)
@@ -60,7 +58,7 @@ local function createStyle(self, unit)
 	misswild:SetPoint('CENTER')
 	self:Tag(misswild, '[misswild]')
 
-	self.ReadyCheck = self.Health:CreateTexture(nil, 'ARTWORK')
+	self.ReadyCheck = self.Health:CreateTexture(nil, 'OVERLAY')
 	self.ReadyCheck:SetAllPoints(self.Health)
 
 	self.DebuffHighlightBackdrop = true
@@ -71,7 +69,7 @@ local function createStyle(self, unit)
 	end
 end
 
-oUF:RegisterStyle('Mini', createStyle)
+oUF:RegisterStyle('Mini', styleFunction)
 oUF:SetActiveStyle('Mini')
 
 local raid = oUF:Spawn('header', 'oUF_Mini', nil, '')
