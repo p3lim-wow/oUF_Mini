@@ -1,16 +1,7 @@
+local gift, mark = GetSpellInfo(21849), GetSpellInfo(1126)
 
-oUF.Tags['[misswild]'] = function(u) return (not UnitAura(u, 'Gift of the Wild') and not UnitAura(u, 'Mark of the Wild')) and '|cffff33ff!|r' end
+oUF.Tags['[misswild]'] = function(u) return not UnitIsDead(u) and not UnitAura(u, gift) and not UnitAura(u, mark) and '|cffff33ff!|r' end
 oUF.TagEvents['[misswild]'] = 'UNIT_AURA'
-
-local function onEnter(self)
-	self.Highlight:Show()
-	UnitFrame_OnEnter(self)
-end
-
-local function onLeave(self)
-	self.Highlight:Hide()
-	UnitFrame_OnLeave(self)
-end
 
 local function colorThreat(self)
 	local status = UnitThreatSituation(self.unit)
@@ -29,8 +20,8 @@ end
 
 local function styleFunction(self, unit)
 	self:RegisterForClicks('AnyUp')
-	self:SetScript('OnEnter', onEnter)
-	self:SetScript('OnLeave', onLeave)
+	self:SetScript('OnEnter', UnitFrame_OnEnter)
+	self:SetScript('OnLeave', UnitFrame_OnLeave)
 
 	self:SetAttribute('initial-height', 16)
 	self:SetAttribute('initial-width', 20)
@@ -49,10 +40,13 @@ local function styleFunction(self, unit)
 	self.Health.bg:SetTexture([=[Interface\ChatFrame\ChatFrameBackground]=])
 	table.insert(self.__elements, colorBackground)
 
-	self.Highlight = self.Health:CreateTexture(nil, 'OVERLAY')
-	self.Highlight:SetTexture(1, 1, 0.6, 0.2)
-	self.Highlight:SetAllPoints(self.Health)
-	self.Highlight:Hide()
+	local highlight = self.Health:CreateTexture(nil, 'OVERLAY')
+	highlight:SetTexture(1, 1, 0.6, 0.2)
+	highlight:SetAllPoints(self.Health)
+	highlight:Hide()
+
+	self:HookScript('OnEnter', function() highlight:Show() end)
+	self:HookScript('OnLeave', function() highlight:Hide() end)
 	
 	local misswild = self.Health:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
 	misswild:SetPoint('CENTER')
