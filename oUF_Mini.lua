@@ -48,10 +48,10 @@ local function styleFunction(self, unit)
 
 	self:HookScript('OnEnter', function() highlight:Show() end)
 	self:HookScript('OnLeave', function() highlight:Hide() end)
-	
-	local misswild = self.Health:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
-	misswild:SetPoint('CENTER')
-	self:Tag(misswild, '[misswild]')
+
+	local status = self.Health:CreateFontString(nil, 'ARTWORK', 'GameFontHighlight')
+	status:SetPoint('CENTER')
+	self:Tag(status, '[miniwild][( )miniafk]')
 
 	self.ReadyCheck = self.Health:CreateTexture(nil, 'OVERLAY')
 	self.ReadyCheck:SetAllPoints(self.Health)
