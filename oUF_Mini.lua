@@ -80,5 +80,5 @@ raid:SetManyAttributes(
 	'columnSpacing', 5,
 	'columnAnchorPoint', 'TOP'
 )
-raid:SetScale(1.03)
+raid:SetScale(1.035)
 raid:Show()
