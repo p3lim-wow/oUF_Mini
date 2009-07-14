@@ -1,6 +1,4 @@
-local gift, mark = GetSpellInfo(21849), GetSpellInfo(1126)
-
-oUF.Tags['[misswild]'] = function(u) return not UnitIsDead(u) and not UnitAura(u, gift) and not UnitAura(u, mark) and '|cffff33ff!|r' end
+oUF.Tags['[misswild]'] = function(u) return not UnitIsDeadOrGhost(u) and not UnitAura(u, 'Gift of the Wild') and not UnitAura(u, 'Mark of the Wild') and '|cffff33ff!|r' end
 oUF.TagEvents['[misswild]'] = 'UNIT_AURA'
 
 local function colorThreat(self)
