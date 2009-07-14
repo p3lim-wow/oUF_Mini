@@ -60,7 +60,7 @@ local function styleFunction(self, unit)
 	self.DebuffHighlightFilter = true
 
 	self.OverrideUpdateHealth = function(self)
-		self:SetAlpha((UnitIsDeadOrGhost(self.unit) or not UnitIsConnected(self.unit)) and 0.25 or 1)
+		self:SetAlpha(UnitIsDeadOrGhost(self.unit) and 0.25 or 1)
 	end
 end
 
