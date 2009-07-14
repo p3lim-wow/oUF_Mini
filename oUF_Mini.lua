@@ -1,6 +1,9 @@
 oUF.Tags['[misswild]'] = function(u) return not UnitIsDeadOrGhost(u) and not UnitAura(u, 'Gift of the Wild') and not UnitAura(u, 'Mark of the Wild') and '|cffff33ff!|r' end
 oUF.TagEvents['[misswild]'] = 'UNIT_AURA'
 
+oUF.Tags['[miniafk]'] = function(u) return UnitIsAFK(u) and '|cffff0000!|r' or not UnitIsConnected(u) and '|cff808080!|r' end
+oUF.TagEvents['[miniafk]'] = 'PLAYER_FLAGS_CHANGED'
+
 local function colorThreat(self)
 	local status = UnitThreatSituation(self.unit)
 	if(status and status > 0) then
